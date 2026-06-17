@@ -526,14 +526,16 @@ Rédige un document structuré, professionnel, avec des titres de sections clair
   function renderContract(text) {
     const output = document.getElementById('contract-output');
 
-    // Convert markdown-style headings to styled spans
     const html = text
       .split('\n')
       .map(line => {
         if (line.startsWith('# '))  return `<h2>${line.slice(2)}</h2>`;
         if (line.startsWith('## ')) return `<h3>${line.slice(3)}</h3>`;
-        if (line.startsWith('**') && line.endsWith('**')) return `<h3>${line.slice(2,-2)}</h3>`;
+        if (line.startsWith('### ')) return `<h3>${line.slice(4)}</h3>`;
+        if (line.startsWith('---')) return `<hr/>`;
         if (line.trim() === '') return '<br/>';
+        line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        line = line.replace(/\*(.+?)\*/g, '<em>$1</em>');
         return `<p>${line}</p>`;
       })
       .join('');
