@@ -500,7 +500,7 @@ Le contrat doit inclure :
 Rédige un document structuré, professionnel, avec des titres de sections clairs. Utilise un langage juridique accessible mais sérieux.`;
 
     try {
-      const response = await fetch("/.netlify/functions/generate", {
+      const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
