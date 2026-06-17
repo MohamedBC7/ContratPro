@@ -403,9 +403,14 @@
       <span class="price">Gratuit — démo</span>
     </div>
 
-    <button class="btn" id="gen-btn" onclick="generateContract()">
-      ✦ Générer mon contrat
+    <div class="price-tag" style="margin-top:8px">
+      <span class="label">Contrat de prestation</span>
+      <span class="price">4,90 €</span>
+    </div>
+    <button class="btn" id="gen-btn" onclick="handlePayment()">
+      ✦ Générer mon contrat — 4,90 €
     </button>
+    <p style="text-align:center;font-size:12px;color:#9099a8;margin-top:8px">Devis gratuit • Contrat 4,90€ • Paiement sécurisé</p>
   </div>
 
   <!-- OUTPUT -->
@@ -450,6 +455,43 @@
   function val(id) {
     return document.getElementById(id).value.trim();
   }
+
+  const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_8x228r5akfXvafkcjV2oE00";
+  
+  function handlePayment() {
+    const type = selectedType;
+    if (type === "Devis commercial") {
+      generateContract();
+    } else {
+      // Save form data to sessionStorage
+      sessionStorage.setItem('contrat_type', selectedType);
+      sessionStorage.setItem('contrat_nom', document.getElementById('nom_prestataire').value);
+      sessionStorage.setItem('contrat_activite', document.getElementById('activite').value);
+      sessionStorage.setItem('contrat_client', document.getElementById('nom_client').value);
+      sessionStorage.setItem('contrat_mission', document.getElementById('mission').value);
+      sessionStorage.setItem('contrat_montant', document.getElementById('montant').value);
+      sessionStorage.setItem('contrat_delai', document.getElementById('delai').value);
+      sessionStorage.setItem('contrat_paiement', document.getElementById('paiement').value);
+      sessionStorage.setItem('contrat_statut', document.getElementById('statut').value);
+      window.location.href = STRIPE_PAYMENT_LINK + "?client_reference_id=contratpro&success_url=" + encodeURIComponent(window.location.href + "?paid=true");
+    }
+  }
+
+  // Auto-generate if returning from payment
+  window.addEventListener('load', () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') === 'true' && sessionStorage.getItem('contrat_nom')) {
+      // Restore form data
+      const fields = ['nom_prestataire','activite','nom_client','mission','montant','delai','paiement','statut'];
+      const keys = ['contrat_nom','contrat_activite','contrat_client','contrat_mission','contrat_montant','contrat_delai','contrat_paiement','contrat_statut'];
+      fields.forEach((f, i) => {
+        const el = document.getElementById(f);
+        if (el) el.value = sessionStorage.getItem(keys[i]) || '';
+      });
+      selectedType = sessionStorage.getItem('contrat_type') || selectedType;
+      generateContract();
+    }
+  });
 
   async function generateContract() {
     const nom = val('nom_prestataire');
