@@ -450,6 +450,16 @@
     document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
     selectedType = el.dataset.type;
+    updateButton();
+  }
+
+  function updateButton() {
+    const btn = document.getElementById('gen-btn');
+    if (selectedType === "Devis commercial") {
+      btn.textContent = "✦ Générer mon devis — Gratuit";
+    } else {
+      btn.textContent = "✦ Générer mon contrat — 4,90 €";
+    }
   }
 
   function val(id) {
